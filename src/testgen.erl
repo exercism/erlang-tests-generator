@@ -20,13 +20,20 @@ main(Args) ->
 %%====================================================================
 
 process_args([], Config = #{path := _, spec_path := _, out_path := _}) ->
-    case maps:is_key(exercises, Config) of
+    Config1 = case maps:is_key(exercises, Config) of
         false -> maps:put(exercises, all, Config);
         true -> Config
+    end,
+
+    case maps:get(exercises, Config1) of
+        [] -> maps:put(exercises, all, Config1);
+        _  -> Config1
     end;
 process_args([], Config = #{path := Path}) ->
     Config1 = case maps:is_key(spec_path, Config) of
-        false -> maps:put(spec_path, iolist_to_binary([Path, "/canonical_data/exercises"]), Config);
+        false ->
+            SpecPath = filename:join([Path, "priv", "problem-specifications", "exercises"]),
+            maps:put(spec_path, SpecPath, Config);
         true -> Config
     end,
 
@@ -71,7 +78,7 @@ search_git_upwards() ->
     end.
 
 execute(Config = #{command := "generate", spec_path := SpecPath, exercises := all}) ->
-    SpecFiles = filelib:wildcard("*/canonical-data.json", binary_to_list(SpecPath)),
+    SpecFiles = filelib:wildcard("*/canonical-data.json", SpecPath),
     Exercises = lists:map(fun tg_file_tools:extract_name/1, SpecFiles),
     put(log_unavailable, false), % TODO: Get rid of the use of the process dictionary!
     execute(maps:put(exercises, Exercises, Config));
@@ -104,11 +111,13 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
         ({error, Reason, Path}) ->
             io:format("Can not open ~p for reading because of ~p.~n", [Path, Reason])
         end, Contents);
+execute(#{exercises := [], spec_path := SpecPath}) ->
+    io:format("~s does not contain problem specifications.~n", [SpecPath]);
 execute(#{command := "check"}) ->
     io:format("This command has not been implemented yet~n");
 execute(#{command := "help"}) ->
     io:format("This command has not been implemented yet~n");
-execute(_) ->
+execute(_Conf) ->
     io:format("Unknown command. Only generate is available right now.~n").
 
 
