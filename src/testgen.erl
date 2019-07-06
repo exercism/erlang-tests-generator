@@ -38,7 +38,9 @@ process_args([], Config = #{path := Path}) ->
     end,
 
     Config2 = case maps:is_key(out_path, Config1) of
-        false -> maps:put(out_path, iolist_to_binary([Path, "/exercises"]), Config1);
+        false ->
+            OutPath = filename:join([Path, "..", "erlang", "exercises"]),
+            maps:put(out_path, OutPath, Config1);
         true -> Config1
     end,
 
