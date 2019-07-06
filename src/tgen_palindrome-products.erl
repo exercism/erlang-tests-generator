@@ -4,6 +4,7 @@
 
 -export([
     available/0,
+    revision/0,
     prepare_test_module/0,
     prepare_tests/1,
     generate_test/2
@@ -12,6 +13,8 @@
 -spec available() -> true.
 available() ->
     true.
+
+revision() -> 1.
 
 prepare_test_module() ->
     {

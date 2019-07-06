@@ -40,7 +40,6 @@
 
 -optional_callbacks([prepare_test_module/0]).
 -optional_callbacks([prepare_tests/1]).
--optional_callbacks([revision/0]). %% Make mandatory once all current gens have been updated
 
 
 -spec check(string()) -> {true, atom()} | false.
@@ -166,10 +165,7 @@ prepare_tests(Module, Tests) ->
 
 generate_test_module(Module, ModuleName, Tests, TestVersion) ->
     SluggedModName = slugify(ModuleName),
-    Revision = case erlang:function_exported(Module, revision, 0) of
-        true -> integer_to_list(Module:revision());
-        false -> "missing"
-    end,
+    Revision = integer_to_list(Module:revision()),
     {ok, GeneratorVsn} = application:get_key(testgen, vsn),
 
     Abstract = [
