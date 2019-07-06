@@ -3,15 +3,10 @@
 -behaviour(tgen).
 
 -export([
-    available/0,
     revision/0,
     prepare_test_module/0,
     generate_test/2
 ]).
-
--spec available() -> true.
-available() ->
-    true.
 
 revision() -> 1.
 

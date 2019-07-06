@@ -29,7 +29,6 @@
     binary()    => jsx:json_term()
 }.
 
--callback available() -> boolean().
 -callback prepare_test_module() -> {ok, [erl_syntax:syntax_tree()]}.
 -callback prepare_tests([exercise_json()]) -> [exercise_json()].
 -callback generate_test(non_neg_integer(), exercise_json()) ->
