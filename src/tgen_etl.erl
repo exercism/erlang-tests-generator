@@ -19,14 +19,16 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
     Input2 = format_lines(Input1),
     Exp2 = format_lines(Exp1),
 
-    Fn = tgs:simple_fun(TestName, [
+    Fn = tgs:simple_fun(TestName ++ "_", [
         tgs:raw("Input="++Input2),
         tgs:raw("Expected="++Exp2),
-        tgs:call_macro("assertEqual", [
-            tgs:call_fun("lists:sort", [tgs:raw("Expected")]),
-            tgs:call_fun("lists:sort", [
-                tgs:call_fun("etl:" ++ Property, [
-                    tgs:raw("Input")])])])]),
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:call_fun("lists:sort", [tgs:raw("Expected")]),
+                tgs:call_fun("lists:sort", [
+                    tgs:call_fun("etl:" ++ Property, [
+                        tgs:raw("Input")])])])])]),
 
     {ok, Fn, [{Property, ["Old"]}]}.
 
