@@ -13,14 +13,16 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value(date_to_tuple(Exp)),
-            tgs:call_fun("meetup:" ++ Property, [
-                tgs:value(Year),
-                tgs:value(Month),
-                tgs:value(to_atom(DayOfWeek)),
-                tgs:value(to_atom(Week))])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value(date_to_tuple(Exp)),
+                tgs:call_fun("meetup:" ++ Property, [
+                    tgs:value(Year),
+                    tgs:value(Month),
+                    tgs:value(to_atom(DayOfWeek)),
+                    tgs:value(to_atom(Week))])])])]),
 
     {ok, Fn, [{Property, ["Year", "Month", "DayOfWeek", "Week"]}]}.
 
