@@ -13,11 +13,13 @@ generate_test(N, #{description := Desc, expected := #{error := _}, property := P
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertError", [
-            tgs:var("_"),
-            tgs:call_fun("series:" ++ Property, [
-                tgs:value(SliceLength), tgs:value(binary_to_list(Series))])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertError", [
+                tgs:var("_"),
+                tgs:call_fun("series:" ++ Property, [
+                    tgs:value(SliceLength), tgs:value(binary_to_list(Series))])])])]),
 
     {ok, Fn, [{Property, ["SliceLength", "Series"]}]};
 
@@ -25,10 +27,12 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value([binary_to_list(E) || E <- Exp]),
-            tgs:call_fun("series:" ++ Property, [
-                tgs:value(SliceLength), tgs:value(binary_to_list(Series))])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value([binary_to_list(E) || E <- Exp]),
+                tgs:call_fun("series:" ++ Property, [
+                    tgs:value(SliceLength), tgs:value(binary_to_list(Series))])])])]),
 
     {ok, Fn, [{Property, ["SliceLength", "Series"]}]}.
