@@ -76,21 +76,24 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
 
     Fn=
     tgs:simple_fun(
-        TestName,
+        TestName ++ "_",
         [
-            tgs:call_macro("assertMatch",
-                [
-                    tgs:value(Exp),
-                    tgs:call_fun(
-                        "triangle:" ++ Property,
-                        [
-                            tgs:value(A),
-                            tgs:value(B),
-                            tgs:value(C)
-                        ]
-                    )
-                ]
-            )
+            erl_syntax:tuple([
+                tgs:string(Desc),
+                tgs:call_macro("_assertMatch",
+                    [
+                        tgs:value(Exp),
+                        tgs:call_fun(
+                            "triangle:" ++ Property,
+                            [
+                                tgs:value(A),
+                                tgs:value(B),
+                                tgs:value(C)
+                            ]
+                        )
+                    ]
+                )
+            ])
         ]
     ),
 
