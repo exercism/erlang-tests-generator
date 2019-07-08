@@ -127,9 +127,11 @@ create_record(SpecPath) ->
     fun (Module) ->
         "tgen_" ++ Name = atom_to_list(Module),
         Path = filename:join([SpecPath, Name, "canonical-data.json"]),
+        SHA  = tg_git_tools:get_latest_sha(SpecPath, Path),
         #tgen{
             module = Module,
             name   = Name,
+            sha    = SHA,
             path   = Path
         }
     end.
