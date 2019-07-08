@@ -16,13 +16,15 @@ generate_test(N, #{description := Desc, expected := Exp, property := <<"grade">>
     {LastIdx, Assigns}=setup(Students),
     Exp1=lists:sort([binary_to_list(E) || E <- Exp]),
 
-    Fn = tgs:simple_fun(TestName, Assigns++[
-        tgs:call_macro("assertEqual", [
-            tgs:value(Exp1),
-            tgs:call_fun("lists:sort", [
-                tgs:call_fun("grade_school:" ++ Property, [
-                    tgs:value(DesiredGrade),
-                    tgs:var("S"++integer_to_list(LastIdx))])])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", Assigns++[
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value(Exp1),
+                tgs:call_fun("lists:sort", [
+                    tgs:call_fun("grade_school:" ++ Property, [
+                        tgs:value(DesiredGrade),
+                        tgs:var("S"++integer_to_list(LastIdx))])])])])]),
 
     {ok, Fn, [{"new", []}, {"add", ["Name", "Grade", "School"]}, {Property, ["Grade", "School"]}]};
 
@@ -33,12 +35,14 @@ generate_test(N, #{description := Desc, expected := Exp, property := <<"roster">
     {LastIdx, Assigns}=setup(Students),
     Exp1=lists:sort([binary_to_list(E) || E <- Exp]),
 
-    Fn = tgs:simple_fun(TestName, Assigns++[
-        tgs:call_macro("assertEqual", [
-            tgs:value(Exp1),
-            tgs:call_fun("lists:sort", [
-                tgs:call_fun("grade_school:" ++ Property, [
-                    tgs:var("S"++integer_to_list(LastIdx))])])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", Assigns++[
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value(Exp1),
+                tgs:call_fun("lists:sort", [
+                    tgs:call_fun("grade_school:" ++ Property, [
+                        tgs:var("S"++integer_to_list(LastIdx))])])])])]),
 
     {ok, Fn, [{"new", []}, {"add", ["Name", "Grade", "School"]}, {Property, ["School"]}]};
 

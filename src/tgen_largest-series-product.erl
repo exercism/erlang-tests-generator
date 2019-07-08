@@ -13,11 +13,13 @@ generate_test(N, #{description := Desc, expected := #{error := _}, property := P
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertError", [
-            tgs:raw("_"),
-            tgs:call_fun("largest_series_product:" ++ Property, [
-                tgs:value(binary_to_list(Digits)), tgs:value(Span)])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertError", [
+                tgs:raw("_"),
+                tgs:call_fun("largest_series_product:" ++ Property, [
+                    tgs:value(binary_to_list(Digits)), tgs:value(Span)])])])]),
 
     {ok, Fn, [{Property, ["Digits", "Span"]}]};
 
@@ -25,10 +27,12 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value(Exp),
-            tgs:call_fun("largest_series_product:" ++ Property, [
-                tgs:value(binary_to_list(Digits)), tgs:value(Span)])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value(Exp),
+                tgs:call_fun("largest_series_product:" ++ Property, [
+                    tgs:value(binary_to_list(Digits)), tgs:value(Span)])])])]),
 
     {ok, Fn, [{Property, ["Digits", "Span"]}]}.

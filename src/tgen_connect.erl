@@ -13,12 +13,14 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
+    Fn = tgs:simple_fun(TestName ++ "_", [
         tgs:raw("Input="++format_lines(Board)),
-        tgs:call_macro("assertEqual", [
-            tgs:value(exp2atom(Exp)),
-            tgs:call_fun("connect:" ++ Property, [
-                tgs:raw("Input")])])]),
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value(exp2atom(Exp)),
+                tgs:call_fun("connect:" ++ Property, [
+                    tgs:raw("Input")])])])]),
 
     {ok, Fn, [{Property, ["Board"]}]}.
 

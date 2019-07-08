@@ -52,11 +52,13 @@ generate_test(N, #{description := Desc, expected := #{error := _}, property := P
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertError", [
-            tgs:raw("_"),
-            tgs:call_fun("palindrome_products:" ++ Property, [
-                tgs:value(Min), tgs:value(Max)])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertError", [
+                tgs:raw("_"),
+                tgs:call_fun("palindrome_products:" ++ Property, [
+                    tgs:value(Min), tgs:value(Max)])])])]),
 
     {ok, Fn, [{Property, ["Min", "Max"]}]};
 
@@ -64,11 +66,13 @@ generate_test(N, #{description := Desc, expected := undefined, property := Prop,
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value(undefined),
-            tgs:call_fun("palindrome_products:" ++ Property, [
-                tgs:value(Min), tgs:value(Max)])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value(undefined),
+                tgs:call_fun("palindrome_products:" ++ Property, [
+                    tgs:value(Min), tgs:value(Max)])])])]),
 
     {ok, Fn, [{Property, ["Min", "Max"]}]};
 
@@ -76,14 +80,16 @@ generate_test(N, #{description := Desc, expected := #{value := ExpVal, factors :
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:call_fun("normalize", [
-                tgs:value({ExpVal, transform_factors(ExpFactors)})
-            ]),
-            tgs:call_fun("normalize", [
-                tgs:call_fun("palindrome_products:" ++ Property, [
-                    tgs:value(Min), tgs:value(Max)])])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:call_fun("normalize", [
+                    tgs:value({ExpVal, transform_factors(ExpFactors)})
+                ]),
+                tgs:call_fun("normalize", [
+                    tgs:call_fun("palindrome_products:" ++ Property, [
+                        tgs:value(Min), tgs:value(Max)])])])])]),
 
     {ok, Fn, [{Property, ["Min", "Max"]}]};
 

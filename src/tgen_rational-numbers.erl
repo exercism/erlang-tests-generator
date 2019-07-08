@@ -28,44 +28,52 @@ generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := <<
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(<<"exp">>),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value({ExpA, ExpB}),
-            tgs:call_fun("rational_numbers:" ++ Property, [
-                tgs:value({A, B}), tgs:value(Exponent)])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value({ExpA, ExpB}),
+                tgs:call_fun("rational_numbers:" ++ Property, [
+                    tgs:value({A, B}), tgs:value(Exponent)])])])]),
 
     {ok, Fn, [{Property, ["Base", "Exponent"]}]};
 generate_test(N, #{description := Desc, expected := Exp, property := <<"expreal">>, input := #{x := X, r := [A, B]}}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(<<"exp">>),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assert", [
-            tgs:call_fun("equal_float", [tgs:value(Exp),
-                tgs:call_fun("rational_numbers:" ++ Property, [
-                    tgs:value(X), tgs:value({A, B})])])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assert", [
+                tgs:call_fun("equal_float", [tgs:value(Exp),
+                    tgs:call_fun("rational_numbers:" ++ Property, [
+                        tgs:value(X), tgs:value({A, B})])])])])]),
 
     {ok, Fn, [{Property, ["Base", "Exponent"]}]};
 generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := Prop = <<"reduce">>, input := #{r := [A, B]}}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value({ExpA, ExpB}),
-            tgs:call_fun("rational_numbers:" ++ Property, [
-                tgs:value({A, B})])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value({ExpA, ExpB}),
+                tgs:call_fun("rational_numbers:" ++ Property, [
+                    tgs:value({A, B})])])])]),
 
     {ok, Fn, [{Property, ["R"]}]};
 generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := <<"abs">>, input := #{r := [A, B]}}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(<<"absolute">>),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value({ExpA, ExpB}),
-            tgs:call_fun("rational_numbers:" ++ Property, [
-                tgs:value({A, B})])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value({ExpA, ExpB}),
+                tgs:call_fun("rational_numbers:" ++ Property, [
+                    tgs:value({A, B})])])])]),
 
     {ok, Fn, [{Property, ["R"]}]};
 generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := Prop, input := #{r1 := [A1, B1], r2 := [A2, B2]}}) ->
@@ -77,11 +85,13 @@ generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := Pr
         end
     ),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value({ExpA, ExpB}),
-            tgs:call_fun("rational_numbers:" ++ Property, [
-                tgs:value({A1, B1}), tgs:value({A2, B2})])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value({ExpA, ExpB}),
+                tgs:call_fun("rational_numbers:" ++ Property, [
+                    tgs:value({A1, B1}), tgs:value({A2, B2})])])])]),
 
     {ok, Fn, [{Property, ["R1", "R2"]}]};
 generate_test(_, _) ->

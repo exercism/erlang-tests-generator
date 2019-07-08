@@ -16,8 +16,7 @@ prepare_test_module() ->
         [
             tgs:raw(
                 io_lib:format(
-                    "equalFloat(A, B) ->~n"
-                    "    ?assertEqual(B, round(A,2)).",
+                    "-define(equalFloat(Desc, A, B), {Desc, ?_assertEqual(B, round(A,2))}).",
                     [])),
             tgs:raw(
                 io_lib:format(
@@ -33,8 +32,9 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_fun("equalFloat", [
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        tgs:call_macro("equalFloat", [
+            tgs:string(Desc),
             tgs:call_fun("space_age:" ++ Property, [
                 tgs:value(planet_b2a(Planet)), tgs:value(Seconds)]), tgs:value(Exp)])]),
 

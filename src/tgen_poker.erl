@@ -16,11 +16,13 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
     Hands1=[binary_to_list(H) || H <- Hands],
     Exp1=lists:sort([binary_to_list(H) || H <- Exp]),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertMatch", [
-            tgs:value(Exp1),
-            tgs:call_fun("lists:sort", [
-                tgs:call_fun("poker:" ++ Property, [
-                    tgs:value(Hands1)])])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertMatch", [
+                tgs:value(Exp1),
+                tgs:call_fun("lists:sort", [
+                    tgs:call_fun("poker:" ++ Property, [
+                        tgs:value(Hands1)])])])])]),
 
     {ok, Fn, [{Property, ["Hands"]}]}.

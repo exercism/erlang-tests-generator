@@ -13,11 +13,13 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertEqual", [
-            tgs:value(Exp),
-            tgs:call_fun("sum_of_multiples:" ++ Property, [
-                tgs:raw(format_factors(Factors)), tgs:value(Limit)])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertEqual", [
+                tgs:value(Exp),
+                tgs:call_fun("sum_of_multiples:" ++ Property, [
+                    tgs:raw(format_factors(Factors)), tgs:value(Limit)])])])]),
 
     {ok, Fn, [{Property, ["Factors", "Limit"]}]}.
 

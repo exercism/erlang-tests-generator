@@ -17,24 +17,28 @@ generate_test(N, #{description := Desc, expected := #{error := _}, property := <
     Asserts0=lists:map(
         fun
             (Nuc) ->
-                tgs:call_macro("assertError", [
-                    tgs:raw("_"),
-                    tgs:call_fun("nucleotide_count:"++Property2, [
-                        tgs:var("Strand"),
-                        tgs:value(Nuc)])])
+                erl_syntax:tuple([
+                    tgs:string(unicode:characters_to_list([Desc, ", ", Nuc])),
+                    tgs:call_macro("_assertError", [
+                        tgs:raw("_"),
+                        tgs:call_fun("nucleotide_count:"++Property2, [
+                            tgs:var("Strand"),
+                            tgs:value(Nuc)])])])
         end,
         ["A", "C", "G", "T"]
     ),
     Asserts1=[
-        tgs:call_macro("assertError", [
-            tgs:raw("_"),
-            tgs:call_fun("nucleotide_count:"++Property1, [
-                tgs:var("Strand")])])
+        erl_syntax:tuple([
+            tgs:string(unicode:characters_to_list([Desc, ", all"])),
+            tgs:call_macro("_assertError", [
+                tgs:raw("_"),
+                tgs:call_fun("nucleotide_count:"++Property1, [
+                    tgs:var("Strand")])])])
         |Asserts0],
 
-    Fn = tgs:simple_fun(TestName, [
+    Fn = tgs:simple_fun(TestName ++ "_", [
         tgs:assign(tgs:var("Strand"), tgs:value(binary_to_list(Strand)))]
-        ++Asserts1),
+        ++[erl_syntax:list(Asserts1)]),
 
     {ok, Fn, [{Property1, ["Strand"]}, {Property2, ["Strand", "Nucleotide"]}]};
 
@@ -48,25 +52,29 @@ generate_test(N, #{description := Desc, expected := Exp, property := <<"nucleoti
     Asserts0=lists:map(
         fun
             ({K, V}) ->
-                tgs:call_macro("assertEqual", [
-                    tgs:value(V),
-                    tgs:call_fun("nucleotide_count:"++Property2, [
-                        tgs:var("Strand"),
-                        tgs:value(K)])])
+                erl_syntax:tuple([
+                    tgs:string(unicode:characters_to_list([Desc, ", ", K])),
+                    tgs:call_macro("_assertEqual", [
+                        tgs:value(V),
+                        tgs:call_fun("nucleotide_count:"++Property2, [
+                            tgs:var("Strand"),
+                            tgs:value(K)])])])
         end,
         Exp1
     ),
     Asserts1=[
-        tgs:call_macro("assertEqual", [
-            tgs:call_fun("lists:sort", [
-                tgs:value(Exp1)]),
-            tgs:call_fun("lists:sort", [
-                tgs:call_fun("nucleotide_count:"++Property1, [
-                    tgs:var("Strand")])])])
+        erl_syntax:tuple([
+            tgs:string(unicode:characters_to_list([Desc, ", all"])),
+            tgs:call_macro("_assertEqual", [
+                tgs:call_fun("lists:sort", [
+                    tgs:value(Exp1)]),
+                tgs:call_fun("lists:sort", [
+                    tgs:call_fun("nucleotide_count:"++Property1, [
+                        tgs:var("Strand")])])])])
         |Asserts0],
 
-    Fn = tgs:simple_fun(TestName, [
+    Fn = tgs:simple_fun(TestName ++ "_", [
         tgs:assign(tgs:var("Strand"), tgs:value(binary_to_list(Strand)))]
-        ++Asserts1),
+        ++[erl_syntax:list(Asserts1)]),
 
     {ok, Fn, [{Property1, ["Strand"]}, {Property2, ["Strand", "Nucleotide"]}]}.

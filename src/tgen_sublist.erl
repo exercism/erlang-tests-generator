@@ -15,29 +15,29 @@ generate_test(N, #{description := Desc, expected := Exp, property := <<"sublist"
     Assertions=case Exp of
         <<"equal">> ->
             [
-               create_relation_macro(equal, L1, L2) |
-               [create_is_macro(F, E, L1, L2) || {F, E} <- [{"is_equal", true}, {"is_unequal", false}, {"is_sublist", true}, {"is_superlist", true}]]
+               create_relation_macro(Desc, equal, L1, L2) |
+               [create_is_macro(Desc, F, E, L1, L2) || {F, E} <- [{"is_equal", true}, {"is_unequal", false}, {"is_sublist", true}, {"is_superlist", true}]]
             ];
         <<"unequal">> ->
             [
-               create_relation_macro(unequal, L1, L2) |
-               [create_is_macro(F, E, L1, L2) || {F, E} <- [{"is_equal", false}, {"is_unequal", true}, {"is_sublist", false}, {"is_superlist", false}]]
+               create_relation_macro(Desc, unequal, L1, L2) |
+               [create_is_macro(Desc, F, E, L1, L2) || {F, E} <- [{"is_equal", false}, {"is_unequal", true}, {"is_sublist", false}, {"is_superlist", false}]]
             ];
         <<"sublist">> ->
             [
-               create_relation_macro(sublist, L1, L2) |
-               [create_is_macro(F, E, L1, L2) || {F, E} <- [{"is_equal", false}, {"is_unequal", true}, {"is_sublist", true}, {"is_superlist", false}]]
+               create_relation_macro(Desc, sublist, L1, L2) |
+               [create_is_macro(Desc, F, E, L1, L2) || {F, E} <- [{"is_equal", false}, {"is_unequal", true}, {"is_sublist", true}, {"is_superlist", false}]]
             ];
         <<"superlist">> ->
             [
-               create_relation_macro(superlist, L1, L2) |
-               [create_is_macro(F, E, L1, L2) || {F, E} <- [{"is_equal", false}, {"is_unequal", true}, {"is_sublist", false}, {"is_superlist", true}]]
+               create_relation_macro(Desc, superlist, L1, L2) |
+               [create_is_macro(Desc, F, E, L1, L2) || {F, E} <- [{"is_equal", false}, {"is_unequal", true}, {"is_sublist", false}, {"is_superlist", true}]]
             ]
     end,
 
     {
         ok,
-        tgs:simple_fun(TestName, Assertions),
+        tgs:simple_fun(TestName ++ "_", [erl_syntax:list(Assertions)]),
         [
             {"relation", ["L1", "L2"]},
             {"is_equal", ["L1", "L2"]},
@@ -49,12 +49,18 @@ generate_test(N, #{description := Desc, expected := Exp, property := <<"sublist"
 generate_test(_, _) ->
     ignore.
 
-create_relation_macro(Exp, L1, L2) ->
-    tgs:call_macro("assertEqual", [tgs:value(Exp), tgs:call_fun("sublist:relation", [tgs:value(L1), tgs:value(L2)])]).
+create_relation_macro(Desc, Exp, L1, L2) ->
+    erl_syntax:tuple([
+        tgs:string(Desc),
+        tgs:call_macro("_assertEqual", [tgs:value(Exp), tgs:call_fun("sublist:relation", [tgs:value(L1), tgs:value(L2)])])
+    ]).
 
-create_is_macro(Fun, Exp, L1, L2) ->
-    Assert=case Exp of
-        true -> "assert";
-        false -> "assertNot"
+create_is_macro(Desc, Fun, Exp, L1, L2) ->
+    {Assert, Label} = case Exp of
+        true -> {"_assert", [Desc, " (", Fun, ")"]};
+        false -> {"_assertNot", [Desc, " (not ", Fun, ")"]}
     end,
-    tgs:call_macro(Assert, [tgs:call_fun("sublist:"++Fun, [tgs:value(L1), tgs:value(L2)])]).
+    erl_syntax:tuple([
+        tgs:string(Label),
+        tgs:call_macro(Assert, [tgs:call_fun("sublist:"++Fun, [tgs:value(L1), tgs:value(L2)])])
+    ]).

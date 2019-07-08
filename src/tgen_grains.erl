@@ -13,32 +13,39 @@ generate_test(N, #{description := Desc, expected := #{error := Message}, propert
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertMatch", [
-            tgs:value({error, binary_to_list(Message)}),
-            tgs:call_fun("grains:square", [
-                tgs:value(Square)])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertMatch", [
+                tgs:value({error, binary_to_list(Message)}),
+                tgs:call_fun("grains:square", [
+                    tgs:value(Square)])])])]),
 
     {ok, Fn, [{Property, ["Square"]}]};
 generate_test(N, #{description := Desc, expected := Exp, property := Prop = <<"square">>, input := #{square := Square}}) ->
     TestName = tgen:to_test_name(N, <<"square_", Desc/binary>>),
+    Descript = <<"Square ", Desc/binary>>,
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertMatch", [
-            tgs:value(Exp),
-            tgs:call_fun("grains:square", [
-                tgs:value(Square)])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Descript),
+            tgs:call_macro("_assertMatch", [
+                tgs:value(Exp),
+                tgs:call_fun("grains:square", [
+                    tgs:value(Square)])])])]),
 
     {ok, Fn, [{Property, ["Square"]}]};
 generate_test(N, #{description := Desc, expected := Exp, property := Prop = <<"total">>}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Fn = tgs:simple_fun(TestName, [
-        tgs:call_macro("assertMatch", [
-            tgs:value(Exp),
-            tgs:call_fun("grains:total", [])])]),
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertMatch", [
+                tgs:value(Exp),
+                tgs:call_fun("grains:total", [])])])]),
 
     {ok, Fn, [{Property, []}]};
 generate_test(_, _) ->
