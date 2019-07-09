@@ -1,4 +1,4 @@
--module('tgen_bracket-push').
+-module('tgen_matching-brackets').
 
 -behaviour(tgen).
 
