@@ -34,47 +34,29 @@ generate_test(N, #{description := Desc, expected := Exp, property := <<"list">>,
 
     {ok, Fn, [{Property, ["Score"]}]};
 
-generate_test(N, #{description := Desc, expected := Exp, property := <<"allergicTo">>, input := #{score := Score}}) ->
+generate_test(N, #{description := Desc, expected := Exp, property := <<"allergicTo">>, input := #{item := Item, score := Score}}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = "is_allergic_to",
 
+    Assert = "_" ++ case Exp of
+        true  -> "assert";
+        false -> "assertNot"
+    end,
+
     Fn=
     tgs:simple_fun(
-        TestName ++ "_",
-        [
+        TestName ++ "_", [
             tgs:assign(tgs:var("Score"), tgs:value(Score)),
-            erl_syntax:list([ create_macro_call(Property, E) || E <- Exp ])]
+            erl_syntax:tuple([
+                tgs:string(Desc),
+                tgs:call_macro(Assert, [
+                    tgs:call_fun("allergies:" ++ Property, [
+                        tgs:value(binary_to_atom(string:lowercase(Item), latin1)),
+                        tgs:var("Score")
+                    ])
+                ])
+            ])
+        ]
     ),
 
-    {ok, Fn, [{Property, ["Substance", "Score"]}]};
-
-generate_test(_, _) ->
-    ignore.
-
-
-
-create_macro_call(Property, #{substance := Substance, result := Result}) ->
-    create_macro_call1(Property, Substance, Result).
-
-create_macro_call1(Property, Substance, true) ->
-    create_macro_call2(Property, Substance, "_assert");
-create_macro_call1(Property, Substance, false) ->
-    create_macro_call2(Property, Substance, "_assertNot").
-
-create_macro_call2(Property, Substance, Assertion) ->
-    erl_syntax:tuple([
-        tgs:value(binary_to_list(Substance)),
-        tgs:call_macro(
-            Assertion,
-            [
-                tgs:call_fun(
-                    "allergies:"++Property,
-                    [
-                        tgs:value(binary_to_atom(string:lowercase(Substance), latin1)),
-                        tgs:var("Score")
-                    ]
-                )
-            ]
-        )
-    ]).
-
+    {ok, Fn, [{Property, ["Substance", "Score"]}]}.
