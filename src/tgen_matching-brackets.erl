@@ -1,4 +1,4 @@
--module('tgen_bracket-push').
+-module('tgen_matching-brackets').
 
 -behaviour(tgen).
 
@@ -22,7 +22,7 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
         erl_syntax:tuple([
             tgs:string(Desc),
             tgs:call_macro(Assert, [
-                tgs:call_fun("bracket_push:" ++ Property, [
+                tgs:call_fun("matching_brackets:" ++ Property, [
                     tgs:value(binary_to_list(Val))])])])]),
 
     {ok, Fn, [{Property, ["String"]}]}.
