@@ -7,7 +7,7 @@
     generate_test/2
 ]).
 
-revision() -> 1.
+revision() -> 2.
 
 generate_test(N, #{description := Desc, expected := Exp, property := <<"list">>, input := #{score := Score}}) ->
     TestName = tgen:to_test_name(N, Desc),
