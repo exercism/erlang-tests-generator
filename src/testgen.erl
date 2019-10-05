@@ -39,7 +39,7 @@ process_args([], Config = #{path := Path}) ->
 
     Config2 = case maps:is_key(out_path, Config1) of
         false ->
-            OutPath = filename:join([Path, "..", "erlang", "exercises"]),
+            OutPath = filename:join([Path, "..", "erlang"]),
             maps:put(out_path, OutPath, Config1);
         true -> Config1
     end,
@@ -100,7 +100,7 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
             io:format("Writing ~s", [ExName]),
             lists:map(fun
                 (#{exercise := GName, name := Name, folder := Folder, content := Content}) ->
-                    Path = lists:flatten(io_lib:format("~s/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
+                    Path = lists:flatten(io_lib:format("~s/exercises/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
                     case file:open(Path, [write]) of
                         {ok, IODevice} ->
                             io:format(IODevice, "~s", [Content]),
