@@ -32,14 +32,14 @@ process_args([], Config = #{path := _, spec_path := _, out_path := _}) ->
 process_args([], Config = #{path := Path}) ->
     Config1 = case maps:is_key(spec_path, Config) of
         false ->
-            SpecPath = filename:join([Path, "priv", "problem-specifications", "exercises"]),
+            SpecPath = filename:join([Path, "priv", "problem-specifications"]),
             maps:put(spec_path, SpecPath, Config);
         true -> Config
     end,
 
     Config2 = case maps:is_key(out_path, Config1) of
         false ->
-            OutPath = filename:join([Path, "..", "erlang", "exercises"]),
+            OutPath = filename:join([Path, "..", "erlang"]),
             maps:put(out_path, OutPath, Config1);
         true -> Config1
     end,
@@ -80,7 +80,7 @@ search_git_upwards() ->
     end.
 
 execute(Config = #{command := "generate", spec_path := SpecPath, exercises := all}) ->
-    SpecFiles = filelib:wildcard("*/canonical-data.json", SpecPath),
+    SpecFiles = filelib:wildcard("exercises/*/canonical-data.json", SpecPath),
     Exercises = lists:map(fun tg_file_tools:extract_name/1, SpecFiles),
     put(log_unavailable, false), % TODO: Get rid of the use of the process dictionary!
     execute(maps:put(exercises, Exercises, Config));
@@ -100,7 +100,7 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
             io:format("Writing ~s", [ExName]),
             lists:map(fun
                 (#{exercise := GName, name := Name, folder := Folder, content := Content}) ->
-                    Path = lists:flatten(io_lib:format("~s/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
+                    Path = lists:flatten(io_lib:format("~s/exercises/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
                     case file:open(Path, [write]) of
                         {ok, IODevice} ->
                             io:format(IODevice, "~s", [Content]),
@@ -126,7 +126,7 @@ execute(_Conf) ->
 create_record(SpecPath) ->
     fun (Module) ->
         "tgen_" ++ Name = atom_to_list(Module),
-        Path = filename:join([SpecPath, Name, "canonical-data.json"]),
+        Path = filename:join([SpecPath, "exercises", Name, "canonical-data.json"]),
         SHA  = tg_git_tools:get_latest_sha(SpecPath, Path),
         #tgen{
             module = Module,
