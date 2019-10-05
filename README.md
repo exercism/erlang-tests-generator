@@ -6,9 +6,9 @@ A generator for the exercises testsuite
 Build
 -----
 
-    $ rebar3 escriptize
+    $ make testgen
 
 Run
 ---
 
-    $ _build/default/bin/testgen
+    $ make
