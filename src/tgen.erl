@@ -23,18 +23,23 @@
 % }.
 
 -type exercise_json() :: #{
-    description := binary(),
+    description := binary() | string(),
     expected    := jsx:json_term(),
     property    := binary(),
+    input       := map(),
     binary()    => jsx:json_term()
 }.
+
+-type fun_name() :: string() | binary().
+-type arg_name() :: string() | binary().
+-type args()     :: [arg_name()].
 
 -callback prepare_test_module() -> {ok, [erl_syntax:syntax_tree()]}.
 -callback prepare_tests([exercise_json()]) -> [exercise_json()].
 -callback generate_test(non_neg_integer(), exercise_json()) ->
     {ok,
         erl_syntax:syntax_tree() | [erl_syntax:syntax_tree()],
-        [{string() | binary(), non_neg_integer()}]} | ignore.
+        [{fun_name(), args()}]} | ignore.
 -callback revision() -> pos_integer().
 
 -optional_callbacks([prepare_test_module/0]).
@@ -108,7 +113,7 @@ to_property_name(Name) when is_binary(Name) ->
 to_property_name(Name) when is_list(Name) ->
     slugify(Name).
 
-slugify(Name) when is_binary(Name) -> list_to_binary(slugify(binary_to_list(Name)));
+% slugify(Name) when is_binary(Name) -> list_to_binary(slugify(binary_to_list(Name)));
 slugify(Name) when is_list(Name) -> slugify(Name, false, []).
 
 slugify([], _, Acc) -> lists:reverse(Acc);

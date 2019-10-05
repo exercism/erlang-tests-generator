@@ -93,7 +93,7 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
     Generators0   = lists:filter(generator_module(Exercises), Modules),
     ok            = code:atomic_load(Generators0),
     Generators1   = lists:map(create_record(SpecPath), Generators0),
-    Generators2   = lists:map(fun (Generator) -> Generator#tgen{dest = iolist_to_binary([OutPath, $/, Generator#tgen.name])} end, Generators1),
+    Generators2   = lists:map(fun (Generator) -> Generator#tgen{dest = binary_to_list(iolist_to_binary([OutPath, $/, Generator#tgen.name]))} end, Generators1),
     Contents      = lists:map(fun tgen:generate/1, Generators2),
     lists:map(
         fun (Xs = [#{exercise := ExName}|_]) ->
