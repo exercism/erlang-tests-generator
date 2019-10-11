@@ -33,7 +33,7 @@ It is the monotonically increasing version of this module.
 
 Spec: `(non_neg_integer(), exercise_json()) -> {ok, erl_syntax:syntax_tree() | [erl_syntax:syntax_tree()], [{string() | binary(), non_neg_integer()}]} } | ignore`
 
-The first argument, usually called `N` has to be conbsidered opaque, it has to be passed to `tgen:to_test_name/2` as first argument to generate the testname.
+The first argument, usually called `N` has to be considered opaque, it has to be passed to `tgen:to_test_name/2` as first argument to generate the testname.
 
 The second argument is the current JSON blob. Please refer to the actual JSON specification of the exercise.
 
