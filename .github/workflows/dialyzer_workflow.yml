@@ -1,0 +1,11 @@
+name: Main workflow
+on: [push]
+jobs:
+  run:
+    name: Compile
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: compile
+      run: make testgen
