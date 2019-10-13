@@ -3,7 +3,7 @@ on: [push]
 jobs:
   run:
     name: Compile
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
     
