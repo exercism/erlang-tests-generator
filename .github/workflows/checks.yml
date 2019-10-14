@@ -3,9 +3,14 @@ name: Main workflow
 on: [push, pull_request]
 
 jobs:
-  run:
-    name: Compile
+  build:
+    name: Build on erlang OTP ${{ matrix.otp }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        otp: ["20.3", "21.3", "22.0"]
+    container:
+      image: erlang:${{ matrix.otp }}
     steps:
     - uses: actions/checkout@master
     - name: compile
