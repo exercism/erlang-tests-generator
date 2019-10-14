@@ -15,3 +15,12 @@ jobs:
     - uses: actions/checkout@master
     - name: compile
       run: make testgen
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    container:
+      image: erlang:22.0
+    steps:
+    - uses: actions/checkout@master
+    - name: Typecheck with dialyzer
+      run: make typecheck
