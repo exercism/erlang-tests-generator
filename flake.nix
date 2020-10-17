@@ -53,7 +53,11 @@
 
         devShell = pkgs.mkShell {
           buildInputs = [
+            # build tools
             beampkgs.rebar3
+
+            # nix helpers
+            pkgs.nixpkgs-fmt
           ];
         };
       }
