@@ -9,11 +9,14 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := Input}) ->
+generate_test(N, #{description := Desc,
+                   expected := Exp,
+                   property := Prop,
+                   input := #{legacy := Legacy}}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Input1 = normalize_input(Input),
+    Input1 = normalize_input(Legacy),
     Exp1 = normalize_expected(Exp),
 
     Input2 = format_lines(Input1),
