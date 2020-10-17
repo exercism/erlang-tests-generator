@@ -1,6 +1,8 @@
 {"1.1.0",
-[{<<"jsx">>,{pkg,<<"jsx">>,<<"2.8.2">>},0}]}.
+[{<<"jsx">>,{pkg,<<"jsx">>,<<"2.8.2">>},0},
+ {<<"tomerl">>,{pkg,<<"tomerl">>,<<"0.4.0">>},0}]}.
 [
 {pkg_hash,[
- {<<"jsx">>, <<"7ACC7D785B5ABE8A6E9ADBDE926A24E481F29956DD8B4DF49E3E4E7BCC92A018">>}]}
+ {<<"jsx">>, <<"7ACC7D785B5ABE8A6E9ADBDE926A24E481F29956DD8B4DF49E3E4E7BCC92A018">>},
+ {<<"tomerl">>, <<"279393D94115F7944688B3CFEE8BD97AF7D1606AC40472D4DC2DA2EB376C9311">>}]}
 ].

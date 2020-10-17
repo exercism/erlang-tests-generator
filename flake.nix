@@ -32,7 +32,7 @@
             name = "${name}-deps";
             inherit version;
             src = "${self}/rebar.lock";
-            sha256 = "0h3y1d05n1apg8wbdgh5v2mpxla26i3h46qcqj3m8kvcrqp9n180";
+            sha256 = "1xvg2xyiyiwqn1ylbhvd528jyvvsv0m51p7wgs9zfx7k4r6pxa7h";
           };
 
           buildInputs = [ ];
