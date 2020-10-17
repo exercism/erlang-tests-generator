@@ -98,7 +98,7 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
     lists:map(
         fun (Xs = [#{exercise := ExName}|_]) ->
             io:format("Writing ~s", [ExName]),
-            lists:map(fun
+            _ = lists:map(fun
                 (#{exercise := GName, name := Name, folder := Folder, content := Content}) ->
                     Path = lists:flatten(io_lib:format("~s/exercises/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
                     case file:open(Path, [write]) of
