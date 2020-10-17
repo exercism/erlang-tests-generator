@@ -54,7 +54,9 @@
         devShell = pkgs.mkShell {
           buildInputs = [
             # build tools
+            erlang
             beampkgs.rebar3
+            pkgs.gnumake
 
             # nix helpers
             pkgs.nixpkgs-fmt
