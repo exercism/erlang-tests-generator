@@ -93,12 +93,18 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
     Generators0   = lists:filter(generator_module(Exercises), Modules),
     ok            = code:atomic_load(Generators0),
     Generators1   = lists:map(create_record(SpecPath), Generators0),
-    Generators2   = lists:map(fun (Generator) -> Generator#tgen{dest = binary_to_list(iolist_to_binary([OutPath, $/, Generator#tgen.name]))} end, Generators1),
+    Generators2   = lists:map(fun (Generator) ->
+                                      DestPath = filename:join([OutPath,
+                                                                "exercises",
+                                                                Generator#tgen.name
+                                                               ]),
+                                      Generator#tgen{dest = DestPath}
+                              end, Generators1),
     Contents      = lists:map(fun tgen:generate/1, Generators2),
     lists:map(
         fun (Xs = [#{exercise := ExName}|_]) ->
             io:format("Writing ~s", [ExName]),
-            lists:map(fun
+            _ = lists:map(fun
                 (#{exercise := GName, name := Name, folder := Folder, content := Content}) ->
                     Path = lists:flatten(io_lib:format("~s/exercises/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
                     case file:open(Path, [write]) of
