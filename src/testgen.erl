@@ -64,12 +64,12 @@ process_args(["--spec-path", SpecPath|Args], Config) ->
 process_args(["--out-path", OutPath|Args], Config) ->
     process_args(Args, maps:put(out_path, OutPath, Config));
 process_args([Arg|Args], Config) ->
-    Config1 = case maps:is_key(command, Config) of
-        false ->
-            maps:put(command, Arg, Config);
-        true ->
-            maps:update_with(exercises, fun(Tail) -> [Arg|Tail] end, [Arg], Config)
-    end,
+    Config1 =
+        if is_map_key(command, Config) ->
+                maps:update_with(exercises, fun(Tail) -> [Arg|Tail] end, [Arg], Config);
+           true ->
+                Config#{command => Arg}
+        end,
     process_args(Args, Config1).
 
 search_git_upwards() ->
