@@ -71,18 +71,25 @@ generate(Generator = #tgen{}) ->
 
 process_json(G = #tgen{name = GName}, Content) when is_list(GName) ->
     process_json(G#tgen{name = list_to_binary(GName)}, Content);
-process_json(#tgen{name = GName, module = Module, sha = SHA}, Content) ->
+process_json(#tgen{name = GName, module = Module, sha = SHA, dest = Dest}, Content) ->
+    TOMLPath = filename:join([Dest, ".meta", "tests.toml"]),
+    {ok, #{<<"canonical-tests">> := CTests}} = tomerl:read_file(TOMLPath),
     case jsx:decode(Content, [return_maps, {labels, attempt_atom}]) of
         _JSON = #{exercise := GName, cases := Cases0} ->
             Cases1=flatten_cases(Cases0),
-            Cases2=prepare_tests(Module, Cases1),
+            Cases2=lists:filter(fun (#{uuid := UUID}) ->
+                                        if is_map_key(UUID, CTests) -> map_get(UUID, CTests);
+                                           true -> throw("UUID not found")
+                                        end
+                                end, Cases1),
+            Cases3=prepare_tests(Module, Cases2),
             % io:format("Parsed JSON: ~p~n", [JSON]),
             {_, TestImpls0, Props} = lists:foldl(fun (Spec, {N, Tests, OldProperties}) ->
                 case Module:generate_test(N, Spec) of
                     {ok, Test, Properties} -> {N+1, [Test|Tests], combine(OldProperties, Properties)};
                     ignore -> {N, Tests, OldProperties}
                 end
-            end, {1, [], []}, Cases2),
+            end, {1, [], []}, Cases3),
             TestImpls1 = lists:reverse(TestImpls0),
             {TestModuleName, TestModuleContent} = generate_test_module(SHA, Module, binary_to_list(GName), TestImpls1),
             {StubModuleName, StubModuleContent} = generate_stub_module(Module, binary_to_list(GName), Props),
