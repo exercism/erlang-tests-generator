@@ -151,22 +151,19 @@ generator_module(Exercises) ->
     end.
 
 help() ->
-    lists:map(fun io:format/1,
-              [
-               "This toll is able to generate testfiles for the erlang track~n",
-               "on exercism.~n",
-               "~n",
-               "Available subcommands:~n",
-               "  generate - Generates the tests in the specified folder~n"
-              ]).
+    io:format("This toll is able to generate testfiles for the erlang track~n"
+              "on exercism.~n"
+              "~n"
+              "Available subcommands:~n"
+              "  generate - Generates the tests in the specified folder~n").
 
 help(generate) ->
-    io:format("The 'generate' subcommand will search for canonical data and~n"),
-    io:format("generate exercise testsuites from it.~n"),
-    io:format("~n"),
-    io:format("It accepts 3 addiotional flags to control its behavior:~n"),
-    io:format("  --path      Base path to use~n"),
-    io:format("  --spec-path Where to search for the canonical data,~n"),
-    io:format("              defaults to $path/priv/canonical-data~n"),
-    io:format("  --out-path  Where the exercises repository is,~n"),
-    io:format("              defaults to $path/../erlang~n").
+    io:format("The 'generate' subcommand will search for canonical data and~n"
+              "generate exercise testsuites from it.~n"
+              "~n"
+              "It accepts 3 addiotional flags to control its behavior:~n"
+              "  --path      Base path to use~n"
+              "  --spec-path Where to search for the canonical data,~n"
+              "              defaults to $path/priv/canonical-data~n"
+              "  --out-path  Where the exercises repository is,~n"
+              "              defaults to $path/../erlang~n").
