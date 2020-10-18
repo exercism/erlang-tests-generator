@@ -10,6 +10,7 @@
 %%====================================================================
 
 %% escript Entry point
+main(["help", "generate"]) -> help(generate);
 main(Args) ->
     {ok, _} = application:ensure_all_started(testgen),
     Config = process_args(Args, #{}),
@@ -147,3 +148,14 @@ generator_module(Exercises) ->
         F("tgen_" ++ Ex) -> lists:member(Ex, Exercises);
         F(_) -> false
     end.
+
+help(generate) ->
+    io:format("The 'generate' subcommand will search for canonical data and~n"),
+    io:format("generate exercise testsuites from it.~n"),
+    io:format("~n"),
+    io:format("It accepts 3 addiotional flags to control its behavior:~n"),
+    io:format("  --path      Base path to use~n"),
+    io:format("  --spec-path Where to search for the canonical data,~n"),
+    io:format("              defaults to $path/priv/canonical-data~n"),
+    io:format("  --out-path  Where the exercises repository is,~n"),
+    io:format("              defaults to $path/../erlang~n").
