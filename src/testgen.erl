@@ -10,6 +10,7 @@
 %%====================================================================
 
 %% escript Entry point
+main(["help"]) -> help();
 main(["help", "generate"]) -> help(generate);
 main(Args) ->
     {ok, _} = application:ensure_all_started(testgen),
@@ -148,6 +149,16 @@ generator_module(Exercises) ->
         F("tgen_" ++ Ex) -> lists:member(Ex, Exercises);
         F(_) -> false
     end.
+
+help() ->
+    lists:map(fun io:format/1,
+              [
+               "This toll is able to generate testfiles for the erlang track~n",
+               "on exercism.~n",
+               "~n",
+               "Available subcommands:~n",
+               "  generate - Generates the tests in the specified folder~n"
+              ]).
 
 help(generate) ->
     io:format("The 'generate' subcommand will search for canonical data and~n"),
