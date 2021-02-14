@@ -98,6 +98,7 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
     Generators2   = lists:map(fun (Generator) ->
                                       DestPath = filename:join([OutPath,
                                                                 "exercises",
+                                                                "practice",
                                                                 Generator#tgen.name
                                                                ]),
                                       Generator#tgen{dest = DestPath}
@@ -108,7 +109,7 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
             io:format("Writing ~s", [ExName]),
             _ = lists:map(fun
                 (#{exercise := GName, name := Name, folder := Folder, content := Content}) ->
-                    Path = lists:flatten(io_lib:format("~s/exercises/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
+                    Path = lists:flatten(io_lib:format("~s/exercises/practice/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
                     case file:open(Path, [write]) of
                         {ok, IODevice} ->
                             io:format(IODevice, "~s", [Content]),
