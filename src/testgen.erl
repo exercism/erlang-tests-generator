@@ -109,7 +109,13 @@ execute(#{command := "generate", spec_path := SpecPath, out_path := OutPath, exe
             io:format("Writing ~s", [ExName]),
             _ = lists:map(fun
                 (#{exercise := GName, name := Name, folder := Folder, content := Content}) ->
-                    Path = lists:flatten(io_lib:format("~s/exercises/practice/~s/~s/~s.erl", [OutPath, GName, Folder, Name])),
+                    Path = filename:join([OutPath,
+                                          "exercises",
+                                          "practice",
+                                          GName,
+                                          Folder,
+                                          iolist_to_binary([Name|".erl"])
+                                         ]),
                     case file:open(Path, [write]) of
                         {ok, IODevice} ->
                             io:format(IODevice, "~s", [Content]),
