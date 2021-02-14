@@ -125,8 +125,6 @@ execute(#{exercises := [], spec_path := SpecPath}) ->
     io:format("~s does not contain problem specifications.~n", [SpecPath]);
 execute(#{command := "check"}) ->
     io:format("This command has not been implemented yet~n");
-execute(#{command := "help"}) ->
-    io:format("This command has not been implemented yet~n");
 execute(_Conf) ->
     io:format("Unknown command. Only generate is available right now.~n").
 
