@@ -24,3 +24,12 @@ jobs:
     - uses: actions/checkout@master
     - name: Typecheck with dialyzer
       run: make typecheck
+  format:
+    name: Check formatting of files
+    runs-on: ubuntu-latest
+    container:
+      image: erlang:22.0
+      steps:
+      - uses: actions/checkout@master
+      - name: Check format
+        run: rebar3 fmt -c
