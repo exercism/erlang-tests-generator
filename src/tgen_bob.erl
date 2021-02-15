@@ -9,7 +9,12 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{heyBob := HeyBob}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{heyBob := HeyBob}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
     Expected = binary_to_list(Exp),
@@ -21,6 +26,10 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
             tgs:call_macro("_assertMatch", [
                 tgs:value(Expected),
                 tgs:call_fun("bob:" ++ Property, [
-                    tgs:value(Sentence)])])])]),
+                    tgs:value(Sentence)
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["String"]}]}.

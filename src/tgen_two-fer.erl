@@ -12,23 +12,27 @@ revision() ->
     1.
 
 prepare_test_module() ->
-    AssertStringEqual = tgs:raw("-define(assertStringEqual(Expect, Expr),
-        begin ((fun () ->
-            __X = (Expect),
-            __Y = (Expr),
-            case string:equal(__X, __Y) of
-                true -> ok;
-                false -> erlang:error({assertStringEqual,
-                    [{module, ?MODULE},
-                     {line, ?LINE},
-                     {expression, (??Expr)},
-                     {expected, unicode:characters_to_list(__X)},
-                     {value, unicode:characters_to_list(__Y)}]})
-            end
-        end)())
-    end)."),
+    AssertStringEqual = tgs:raw(
+        "-define(assertStringEqual(Expect, Expr),\n"
+        "        begin ((fun () ->\n"
+        "            __X = (Expect),\n"
+        "            __Y = (Expr),\n"
+        "            case string:equal(__X, __Y) of\n"
+        "                true -> ok;\n"
+        "                false -> erlang:error({assertStringEqual,\n"
+        "                    [{module, ?MODULE},\n"
+        "                     {line, ?LINE},\n"
+        "                     {expression, (??Expr)},\n"
+        "                     {expected, unicode:characters_to_list(__X)},\n"
+        "                     {value, unicode:characters_to_list(__Y)}]})\n"
+        "            end\n"
+        "        end)())\n"
+        "    end)."
+    ),
 
-    UnderscoreAssertStringEqual = tgs:raw("-define(_assertStringEqual(Expect, Expr), ?_test(?assertStringEqual(Expect, Expr)))."),
+    UnderscoreAssertStringEqual = tgs:raw(
+        "-define(_assertStringEqual(Expect, Expr), ?_test(?assertStringEqual(Expect, Expr)))."
+    ),
 
     {ok, [AssertStringEqual, UnderscoreAssertStringEqual]}.
 
@@ -41,7 +45,10 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
             tgs:value(binary_to_list(Desc)),
             tgs:call_macro("_assertStringEqual", [
                 tgs:value(binary_to_list(Exp)),
-                tgs:call_fun("two_fer:" ++ Property, [])])])]),
+                tgs:call_fun("two_fer:" ++ Property, [])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, []}]};
 generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{name := Name}}) ->
@@ -54,6 +61,10 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
             tgs:call_macro("_assertStringEqual", [
                 tgs:value(binary_to_list(Exp)),
                 tgs:call_fun("two_fer:" ++ Property, [
-                    tgs:value(binary_to_list(Name))])])])]),
+                    tgs:value(binary_to_list(Name))
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Name"]}]}.

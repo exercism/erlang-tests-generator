@@ -23,6 +23,11 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
                 tgs:value(Exp2),
                 tgs:call_fun("lists:sort", [
                     tgs:call_fun("pythagorean_triplet:" ++ Property, [
-                        tgs:value(Limit)])])])])]),
+                        tgs:value(Limit)
+                    ])
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Limit"]}]}.

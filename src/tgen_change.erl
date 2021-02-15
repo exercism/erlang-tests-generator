@@ -13,13 +13,20 @@ revision() -> 1.
 prepare_tests(Cases) ->
     lists:map(
         fun
-            (Case=#{expected := #{error := _}, input := #{target := Target}}) when Target>0 -> Case#{expected := undefined};
-            (Case) -> Case
+            (Case = #{expected := #{error := _}, input := #{target := Target}}) when Target > 0 ->
+                Case#{expected := undefined};
+            (Case) ->
+                Case
         end,
         Cases
     ).
 
-generate_test(N, #{description := Desc, expected := #{error := _}, property := Prop, input := #{target := Target, coins := Coins}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := #{error := _},
+    property := Prop,
+    input := #{target := Target, coins := Coins}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -31,10 +38,20 @@ generate_test(N, #{description := Desc, expected := #{error := _}, property := P
             tgs:call_macro("_assertError", [
                 tgs:var("_"),
                 tgs:call_fun("change:" ++ Property, [
-                    tgs:var("Target"), tgs:var("Coins")])])])]),
+                    tgs:var("Target"),
+                    tgs:var("Coins")
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Target", "Coins"]}]};
-generate_test(N, #{description := Desc, expected := undefined, property := Prop, input := #{target := Target, coins := Coins}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := undefined,
+    property := Prop,
+    input := #{target := Target, coins := Coins}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -47,10 +64,20 @@ generate_test(N, #{description := Desc, expected := undefined, property := Prop,
             tgs:call_macro("_assertEqual", [
                 tgs:var("Expected"),
                 tgs:call_fun("change:" ++ Property, [
-                    tgs:var("Target"), tgs:var("Coins")])])])]),
+                    tgs:var("Target"),
+                    tgs:var("Coins")
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Target", "Coins"]}]};
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{target := Target, coins := Coins}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{target := Target, coins := Coins}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -63,7 +90,12 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
             tgs:call_macro("_assertEqual", [
                 tgs:var("Expected"),
                 tgs:call_fun("change:" ++ Property, [
-                    tgs:var("Target"), tgs:var("Coins")])])])]),
+                    tgs:var("Target"),
+                    tgs:var("Coins")
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Target", "Coins"]}]}.
 

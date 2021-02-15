@@ -9,7 +9,12 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := #{error := _}, property := Prop, input := #{preorder := PreOrder, inorder := InOrder}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := #{error := _},
+    property := Prop,
+    input := #{preorder := PreOrder, inorder := InOrder}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -22,24 +27,39 @@ generate_test(N, #{description := Desc, expected := #{error := _}, property := P
             tgs:call_macro("_assertError", [
                 tgs:var("_"),
                 tgs:call_fun("satellite:" ++ Property, [
-                    tgs:value(PreOrder1), tgs:value(InOrder1)])])])]),
+                    tgs:value(PreOrder1),
+                    tgs:value(InOrder1)
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["PreOrder", "InOrder"]}]};
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{preorder := PreOrder, inorder := InOrder}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{preorder := PreOrder, inorder := InOrder}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
     PreOrder1 = normalize_input(PreOrder),
     InOrder1 = normalize_input(InOrder),
-    Exp1=normalize_exp(Exp),
+    Exp1 = normalize_exp(Exp),
 
     Fn = tgs:simple_fun(TestName ++ "_", [
         erl_syntax:tuple([
             tgs:string(Desc),
             tgs:call_macro("_assertEqual", [
-		tgs:value(Exp1),
+                tgs:value(Exp1),
                 tgs:call_fun("satellite:" ++ Property, [
-                    tgs:value(PreOrder1), tgs:value(InOrder1)])])])]),
+                    tgs:value(PreOrder1),
+                    tgs:value(InOrder1)
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["PreOrder", "InOrder"]}]}.
 

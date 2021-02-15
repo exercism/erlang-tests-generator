@@ -5,7 +5,7 @@
     parent_dir/1
 ]).
 
-extract_name("exercises" ++ [Slash|Name]) when Slash =:= $\\; Slash =:= $/ ->
+extract_name("exercises" ++ [Slash | Name]) when Slash =:= $\\; Slash =:= $/ ->
     lists:takewhile(fun(C) -> not lists:member(C, [$/, $\\]) end, Name).
 
 parent_dir(Dir) ->

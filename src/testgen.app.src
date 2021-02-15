@@ -1,15 +1,15 @@
-{application, testgen,
- [{description, "A generator for the exercises testsuite"},
-  {vsn, "0.2.0"},
-  {registered, []},
-  {applications,
-   [kernel,
-    stdlib
-   ]},
-  {env,[]},
-  {modules, []},
+{application, testgen, [
+    {description, "A generator for the exercises testsuite"},
+    {vsn, "0.2.0"},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {env, []},
+    {modules, []},
 
-  {maintainers, []},
-  {licenses, ["MIT"]},
-  {links, []}
- ]}.
+    {maintainers, []},
+    {licenses, ["MIT"]},
+    {links, []}
+]}.

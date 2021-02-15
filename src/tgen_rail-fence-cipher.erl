@@ -9,7 +9,12 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{msg := Message, rails := Rails}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{msg := Message, rails := Rails}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -19,6 +24,11 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
             tgs:call_macro("_assertMatch", [
                 tgs:value(binary_to_list(Exp)),
                 tgs:call_fun("rail_fence_cipher:" ++ Property, [
-                    tgs:value(binary_to_list(Message)), tgs:value(Rails)])])])]),
+                    tgs:value(binary_to_list(Message)),
+                    tgs:value(Rails)
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Message", "Rails"]}]}.

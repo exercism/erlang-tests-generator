@@ -19,6 +19,10 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
             tgs:call_macro("_assertEqual", [
                 tgs:value(Exp),
                 tgs:call_fun("scrabble_score:" ++ Property, [
-                    tgs:value(binary_to_list(Word))])])])]),
+                    tgs:value(binary_to_list(Word))
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Word"]}]}.

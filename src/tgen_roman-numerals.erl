@@ -9,7 +9,12 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := _Desc, expected := Exp, property := Prop, input := #{number := Number}}) ->
+generate_test(N, #{
+    description := _Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{number := Number}
+}) ->
     TestName = tgen:to_test_name(N, "convert " ++ integer_to_list(Number)),
     Property = tgen:to_property_name(Prop),
 
@@ -19,6 +24,10 @@ generate_test(N, #{description := _Desc, expected := Exp, property := Prop, inpu
             tgs:call_macro("_assertEqual", [
                 tgs:value(binary_to_list(Exp)),
                 tgs:call_fun("roman_numerals:" ++ Property, [
-                    tgs:value(Number)])])])]),
+                    tgs:value(Number)
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Number"]}]}.

@@ -19,7 +19,11 @@ generate_test(N, #{description := Desc, expected := null, property := Prop, inpu
             tgs:call_macro("_assertMatch", [
                 tgs:value(error),
                 tgs:call_fun("rna_transcription:" ++ Property, [
-                    tgs:value(binary_to_list(DNA))])])])]),
+                    tgs:value(binary_to_list(DNA))
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Strand"]}]};
 generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{dna := DNA}}) ->
@@ -32,6 +36,10 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
             tgs:call_macro("_assertMatch", [
                 tgs:value(binary_to_list(Exp)),
                 tgs:call_fun("rna_transcription:" ++ Property, [
-                    tgs:value(binary_to_list(DNA))])])])]),
+                    tgs:value(binary_to_list(DNA))
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Strand"]}]}.

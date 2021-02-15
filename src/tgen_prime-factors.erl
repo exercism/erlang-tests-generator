@@ -9,7 +9,12 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{value := Value}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{value := Value}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -20,6 +25,11 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
                 tgs:call_fun("lists:sort", [tgs:value(Exp)]),
                 tgs:call_fun("lists:sort", [
                     tgs:call_fun("prime_factors:" ++ Property, [
-                        tgs:value(Value)])])])])]),
+                        tgs:value(Value)
+                    ])
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Value"]}]}.

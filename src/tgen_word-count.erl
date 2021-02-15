@@ -26,15 +26,21 @@ prepare_test_module() ->
         ]
     }.
 
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{sentence := Sentence}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{sentence := Sentence}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Exp1=maps:fold(
+    Exp1 = maps:fold(
         fun
             (K, V, Acc) when is_binary(K) ->
                 Acc#{binary_to_list(K) => V};
-            (K, V, Acc) when is_atom(K) -> %% jsx may return an atom instead of a binary for map keys
+            %% jsx may return an atom instead of a binary for map keys
+            (K, V, Acc) when is_atom(K) ->
                 Acc#{atom_to_list(K) => V}
         end,
         #{},
@@ -48,6 +54,11 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
                 tgs:call_fun("assertCount", [
                     tgs:value(Exp1),
                     tgs:call_fun("word_count:" ++ Property, [
-                        tgs:value(binary_to_list(Sentence))])])])])]),
+                        tgs:value(binary_to_list(Sentence))
+                    ])
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Sentence"]}]}.

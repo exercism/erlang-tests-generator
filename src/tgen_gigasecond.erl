@@ -9,7 +9,12 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := Exp, property := <<"add">>, input := #{moment := From}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := <<"add">>,
+    input := #{moment := From}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(<<"from">>),
 
@@ -19,11 +24,19 @@ generate_test(N, #{description := Desc, expected := Exp, property := <<"add">>, 
             tgs:call_macro("_assertEqual", [
                 tgs:value(ts_transform(Exp, strict)),
                 tgs:call_fun("gigasecond:" ++ Property, [
-                    tgs:value(ts_transform(From, relaxed))])])])]),
+                    tgs:value(ts_transform(From, relaxed))
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["From"]}]}.
 
-ts_transform(<<Year:4/bytes, $-, Month:2/bytes, $-, Day:2/bytes, $T, Hours:2/bytes, $:, Minutes:2/bytes, $:, Seconds:2/bytes>>, _) ->
+ts_transform(
+    <<Year:4/bytes, $-, Month:2/bytes, $-, Day:2/bytes, $T, Hours:2/bytes, $:, Minutes:2/bytes, $:,
+        Seconds:2/bytes>>,
+    _
+) ->
     {
         {binary_to_integer(Year), binary_to_integer(Month), binary_to_integer(Day)},
         {binary_to_integer(Hours), binary_to_integer(Minutes), binary_to_integer(Seconds)}

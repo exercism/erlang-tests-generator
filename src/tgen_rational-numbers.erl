@@ -24,7 +24,12 @@ prepare_test_module() ->
         ]
     }.
 
-generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := <<"exprational">>, input := #{r := [A, B], n := Exponent}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := [ExpA, ExpB],
+    property := <<"exprational">>,
+    input := #{r := [A, B], n := Exponent}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(<<"exp">>),
 
@@ -34,10 +39,20 @@ generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := <<
             tgs:call_macro("_assertEqual", [
                 tgs:value({ExpA, ExpB}),
                 tgs:call_fun("rational_numbers:" ++ Property, [
-                    tgs:value({A, B}), tgs:value(Exponent)])])])]),
+                    tgs:value({A, B}),
+                    tgs:value(Exponent)
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Base", "Exponent"]}]};
-generate_test(N, #{description := Desc, expected := Exp, property := <<"expreal">>, input := #{x := X, r := [A, B]}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := <<"expreal">>,
+    input := #{x := X, r := [A, B]}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(<<"exp">>),
 
@@ -45,12 +60,24 @@ generate_test(N, #{description := Desc, expected := Exp, property := <<"expreal"
         erl_syntax:tuple([
             tgs:string(Desc),
             tgs:call_macro("_assert", [
-                tgs:call_fun("equal_float", [tgs:value(Exp),
+                tgs:call_fun("equal_float", [
+                    tgs:value(Exp),
                     tgs:call_fun("rational_numbers:" ++ Property, [
-                        tgs:value(X), tgs:value({A, B})])])])])]),
+                        tgs:value(X),
+                        tgs:value({A, B})
+                    ])
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Base", "Exponent"]}]};
-generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := Prop = <<"reduce">>, input := #{r := [A, B]}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := [ExpA, ExpB],
+    property := Prop = <<"reduce">>,
+    input := #{r := [A, B]}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -60,10 +87,19 @@ generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := Pr
             tgs:call_macro("_assertEqual", [
                 tgs:value({ExpA, ExpB}),
                 tgs:call_fun("rational_numbers:" ++ Property, [
-                    tgs:value({A, B})])])])]),
+                    tgs:value({A, B})
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["R"]}]};
-generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := <<"abs">>, input := #{r := [A, B]}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := [ExpA, ExpB],
+    property := <<"abs">>,
+    input := #{r := [A, B]}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(<<"absolute">>),
 
@@ -73,10 +109,19 @@ generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := <<
             tgs:call_macro("_assertEqual", [
                 tgs:value({ExpA, ExpB}),
                 tgs:call_fun("rational_numbers:" ++ Property, [
-                    tgs:value({A, B})])])])]),
+                    tgs:value({A, B})
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["R"]}]};
-generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := Prop, input := #{r1 := [A1, B1], r2 := [A2, B2]}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := [ExpA, ExpB],
+    property := Prop,
+    input := #{r1 := [A1, B1], r2 := [A2, B2]}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(
         case Prop of
@@ -91,7 +136,12 @@ generate_test(N, #{description := Desc, expected := [ExpA, ExpB], property := Pr
             tgs:call_macro("_assertEqual", [
                 tgs:value({ExpA, ExpB}),
                 tgs:call_fun("rational_numbers:" ++ Property, [
-                    tgs:value({A1, B1}), tgs:value({A2, B2})])])])]),
+                    tgs:value({A1, B1}),
+                    tgs:value({A2, B2})
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["R1", "R2"]}]};
 generate_test(_, _) ->

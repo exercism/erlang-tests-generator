@@ -9,7 +9,12 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{year := Year, month := Month, week := Week, dayofweek := DayOfWeek}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{year := Year, month := Month, week := Week, dayofweek := DayOfWeek}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -22,7 +27,11 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
                     tgs:value(Year),
                     tgs:value(Month),
                     tgs:value(to_atom(DayOfWeek)),
-                    tgs:value(to_atom(Week))])])])]),
+                    tgs:value(to_atom(Week))
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Year", "Month", "DayOfWeek", "Week"]}]}.
 
