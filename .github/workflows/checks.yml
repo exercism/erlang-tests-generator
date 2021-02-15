@@ -15,6 +15,7 @@ jobs:
     - uses: actions/checkout@master
     - name: compile
       run: make testgen
+
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
@@ -24,6 +25,7 @@ jobs:
     - uses: actions/checkout@master
     - name: Typecheck with dialyzer
       run: make typecheck
+
   format:
     name: Check formatting of files
     runs-on: ubuntu-latest
