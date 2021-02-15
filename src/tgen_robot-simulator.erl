@@ -9,22 +9,37 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := #{position := #{x := ExpX, y := ExpY}, direction := ExpD}, property := <<"create">>, input := #{position := #{x := X, y := Y}, direction := D}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := #{position := #{x := ExpX, y := ExpY}, direction := ExpD},
+    property := <<"create">>,
+    input := #{position := #{x := X, y := Y}, direction := D}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
 
-    Create=tgs:assign(tgs:var("Robot"), tgs:call_fun("robot_simulator:create", [])),
-    Placement=tgs:call_fun("robot_simulator:place", [tgs:var("Robot"), tgs:value(direction_b2a(D)), tgs:value({X, Y})]),
-    AssertDirection=tgs:call_macro("_assertEqual", [tgs:value(direction_b2a(ExpD)), tgs:call_fun("robot_simulator:direction", [tgs:var("Robot")])]),
-    AssertPosition=tgs:call_macro("_assertEqual", [tgs:value({ExpX, ExpY}), tgs:call_fun("robot_simulator:position", [tgs:var("Robot")])]),
+    Create = tgs:assign(tgs:var("Robot"), tgs:call_fun("robot_simulator:create", [])),
+    Placement = tgs:call_fun("robot_simulator:place", [
+        tgs:var("Robot"),
+        tgs:value(direction_b2a(D)),
+        tgs:value({X, Y})
+    ]),
+    AssertDirection = tgs:call_macro("_assertEqual", [
+        tgs:value(direction_b2a(ExpD)),
+        tgs:call_fun("robot_simulator:direction", [tgs:var("Robot")])
+    ]),
+    AssertPosition = tgs:call_macro("_assertEqual", [
+        tgs:value({ExpX, ExpY}),
+        tgs:call_fun("robot_simulator:position", [tgs:var("Robot")])
+    ]),
 
     Fn = tgs:simple_fun(TestName ++ "_", [
-            Create,
-            Placement,
-            erl_syntax:list([
-                erl_syntax:tuple([tgs:string([Desc, " (direction)"]), AssertDirection]),
-                erl_syntax:tuple([tgs:string([Desc, " (position)"]), AssertPosition])
-            ])
-        ]),
+        Create,
+        Placement,
+        erl_syntax:list([
+            erl_syntax:tuple([tgs:string([Desc, " (direction)"]), AssertDirection]),
+            erl_syntax:tuple([tgs:string([Desc, " (position)"]), AssertPosition])
+        ])
+    ]),
 
     {
         ok,
@@ -36,26 +51,45 @@ generate_test(N, #{description := Desc, expected := #{position := #{x := ExpX, y
             {"position", ["Robot"]}
         ]
     };
-generate_test(N, #{description := Desc, expected := #{position := #{x := ExpX, y := ExpY}, direction := ExpD}, property := <<"move">>, input := #{position := #{x := X, y := Y}, direction := D, instructions := I}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := #{position := #{x := ExpX, y := ExpY}, direction := ExpD},
+    property := <<"move">>,
+    input := #{position := #{x := X, y := Y}, direction := D, instructions := I}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
 
-    Create=tgs:assign(tgs:var("Robot"), tgs:call_fun("robot_simulator:create", [])),
-    Placement=tgs:call_fun("robot_simulator:place", [tgs:var("Robot"), tgs:value(direction_b2a(D)), tgs:value({X, Y})]),
-    Instructions=[tgs:call_fun("robot_simulator:"++instruction_c2l(Instr), [tgs:var("Robot")]) || <<Instr>> <= I],
-    AssertDirection=tgs:call_macro("_assertEqual", [tgs:value(direction_b2a(ExpD)), tgs:call_fun("robot_simulator:direction", [tgs:var("Robot")])]),
-    AssertPosition=tgs:call_macro("_assertEqual", [tgs:value({ExpX, ExpY}), tgs:call_fun("robot_simulator:position", [tgs:var("Robot")])]),
-
-    FnBody=[
-        Create,
-        Placement
-    ]
-    ++Instructions
-    ++[
-        erl_syntax:list([
-            erl_syntax:tuple([tgs:string([Desc, " (direction)"]), AssertDirection]),
-            erl_syntax:tuple([tgs:string([Desc, " (position)"]), AssertPosition])
-        ])
+    Create = tgs:assign(tgs:var("Robot"), tgs:call_fun("robot_simulator:create", [])),
+    Placement = tgs:call_fun("robot_simulator:place", [
+        tgs:var("Robot"),
+        tgs:value(direction_b2a(D)),
+        tgs:value({X, Y})
+    ]),
+    Instructions = [
+        tgs:call_fun("robot_simulator:" ++ instruction_c2l(Instr), [tgs:var("Robot")])
+     || <<Instr>> <= I
     ],
+    AssertDirection = tgs:call_macro("_assertEqual", [
+        tgs:value(direction_b2a(ExpD)),
+        tgs:call_fun("robot_simulator:direction", [tgs:var("Robot")])
+    ]),
+    AssertPosition = tgs:call_macro("_assertEqual", [
+        tgs:value({ExpX, ExpY}),
+        tgs:call_fun("robot_simulator:position", [tgs:var("Robot")])
+    ]),
+
+    FnBody =
+        [
+            Create,
+            Placement
+        ] ++
+            Instructions ++
+            [
+                erl_syntax:list([
+                    erl_syntax:tuple([tgs:string([Desc, " (direction)"]), AssertDirection]),
+                    erl_syntax:tuple([tgs:string([Desc, " (position)"]), AssertPosition])
+                ])
+            ],
 
     Fn = tgs:simple_fun(TestName ++ "_", FnBody),
 

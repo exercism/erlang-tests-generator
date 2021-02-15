@@ -9,7 +9,12 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := #{error := _}, property := Prop, input := #{instructions := Instructions}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := #{error := _},
+    property := Prop,
+    input := #{instructions := Instructions}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -19,10 +24,19 @@ generate_test(N, #{description := Desc, expected := #{error := _}, property := P
             tgs:call_macro("_assertError", [
                 tgs:raw("_"),
                 tgs:call_fun("forth:" ++ Property, [
-                    tgs:value([binary_to_list(I) || I <- Instructions])])])])]),
+                    tgs:value([binary_to_list(I) || I <- Instructions])
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Instructions"]}]};
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{instructions := Instructions}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{instructions := Instructions}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -32,6 +46,10 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
             tgs:call_macro("_assertEqual", [
                 tgs:value(Exp),
                 tgs:call_fun("forth:" ++ Property, [
-                    tgs:value([binary_to_list(I) || I <- Instructions])])])])]),
+                    tgs:value([binary_to_list(I) || I <- Instructions])
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Instructions"]}]}.

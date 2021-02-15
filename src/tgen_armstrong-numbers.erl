@@ -9,20 +9,31 @@
 
 revision() -> 1.
 
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{number := Number}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{number := Number}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Assert = "_" ++ case Exp of
-        true -> "assert";
-        false -> "assertNot"
-    end,
+    Assert =
+        "_" ++
+            case Exp of
+                true -> "assert";
+                false -> "assertNot"
+            end,
 
     Fn = tgs:simple_fun(TestName ++ "_", [
         erl_syntax:tuple([
             tgs:string(Desc),
             tgs:call_macro(Assert, [
                 tgs:call_fun("armstrong_numbers:" ++ Property, [
-                    tgs:value(Number)])])])]),
+                    tgs:value(Number)
+                ])
+            ])
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Number"]}]}.

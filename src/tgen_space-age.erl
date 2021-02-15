@@ -17,18 +17,26 @@ prepare_test_module() ->
             tgs:raw(
                 io_lib:format(
                     "-define(equalFloat(Desc, A, B), {Desc, ?_assertEqual(B, round(A,2))}).",
-                    [])),
+                    []
+                )
+            ),
             tgs:raw(
                 io_lib:format(
                     "round(Number, Precision) ->~n"
                     "    P = math:pow(10, Precision),~n"
                     "    round(Number * P) / P.",
-                    []))
+                    []
+                )
+            )
         ]
     }.
 
-
-generate_test(N, #{description := Desc, expected := Exp, property := Prop, input := #{planet := Planet, seconds := Seconds}}) ->
+generate_test(N, #{
+    description := Desc,
+    expected := Exp,
+    property := Prop,
+    input := #{planet := Planet, seconds := Seconds}
+}) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
@@ -36,7 +44,12 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop, input
         tgs:call_macro("equalFloat", [
             tgs:string(Desc),
             tgs:call_fun("space_age:" ++ Property, [
-                tgs:value(planet_b2a(Planet)), tgs:value(Seconds)]), tgs:value(Exp)])]),
+                tgs:value(planet_b2a(Planet)),
+                tgs:value(Seconds)
+            ]),
+            tgs:value(Exp)
+        ])
+    ]),
 
     {ok, Fn, [{Property, ["Planet", "Seconds"]}]}.
 
