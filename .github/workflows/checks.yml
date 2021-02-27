@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: erlang:22.0
-      steps:
-      - uses: actions/checkout@master
-      - name: Check format
-        run: rebar3 fmt -c
+    steps:
+    - uses: actions/checkout@master
+    - name: Check format
+      run: rebar3 fmt -c
