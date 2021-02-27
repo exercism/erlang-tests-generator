@@ -78,9 +78,9 @@ process_json(#tgen{name = GName, module = Module, sha = SHA, dest = Dest}, Conte
         _JSON = #{exercise := GName, cases := Cases0} ->
             Cases1=flatten_cases(Cases0),
             Cases2=lists:filter(fun (#{uuid := UUID}) ->
-                                        if is_map_key(UUID, CTests) ->
-                                                map_get(<<"include">>, map_get(UUID, CTests));
-                                           true -> throw({uuid_not_found, UUID})
+                                        case tomerl:get(CTests, [UUID, include]) of
+                                            {ok, V} -> V;
+                                            {error, not_found} -> throw({uuid_not_found, UUID})
                                         end
                                 end, Cases1),
             Cases3=prepare_tests(Module, Cases2),
