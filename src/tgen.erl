@@ -73,12 +73,13 @@ process_json(G = #tgen{name = GName}, Content) when is_list(GName) ->
     process_json(G#tgen{name = list_to_binary(GName)}, Content);
 process_json(#tgen{name = GName, module = Module, sha = SHA, dest = Dest}, Content) ->
     TOMLPath = filename:join([Dest, ".meta", "tests.toml"]),
-    {ok, #{<<"canonical-tests">> := CTests}} = tomerl:read_file(TOMLPath),
+    {ok, #{} = CTests} = tomerl:read_file(TOMLPath),
     case jsx:decode(Content, [return_maps, {labels, attempt_atom}]) of
         _JSON = #{exercise := GName, cases := Cases0} ->
             Cases1=flatten_cases(Cases0),
             Cases2=lists:filter(fun (#{uuid := UUID}) ->
-                                        if is_map_key(UUID, CTests) -> map_get(UUID, CTests);
+                                        if is_map_key(UUID, CTests) ->
+                                                map_get(<<"include">>, map_get(UUID, CTests));
                                            true -> throw({uuid_not_found, UUID})
                                         end
                                 end, Cases1),
