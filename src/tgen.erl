@@ -249,7 +249,8 @@ generate_test_module(SHA, Module, ModuleName, Tests) ->
 
     Content = Abstract ++ [nl, nl] ++ Preamble ++ [nl, nl] ++ Body,
 
-    {SluggedModName ++ "_tests",
+    {
+        SluggedModName ++ "_tests",
         lists:flatten(
             lists:map(
                 fun
@@ -258,7 +259,8 @@ generate_test_module(SHA, Module, ModuleName, Tests) ->
                 end,
                 Content
             )
-        )}.
+        )
+    }.
 
 inter(_, []) -> [];
 inter(_, [X]) -> [X];
