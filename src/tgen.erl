@@ -76,11 +76,22 @@ process_json(#tgen{name = GName, module = Module, sha = SHA, dest = Dest}, Conte
         _JSON = #{exercise := GName, cases := Cases0} ->
             Cases1 = flatten_cases(Cases0),
             Cases2 = lists:filter(
-                fun(#{uuid := UUID}) ->
-                    case tomerl:get(CTests, [UUID, include]) of
-                        {ok, V} -> V;
-                        {error, not_found} -> throw({uuid_not_found, UUID})
-                    end
+                fun(#{uuid := UUID, description := Description}) ->
+                   Included = case tomerl:get(CTests, [UUID, include]) of
+                                  {ok, V} -> V =:= true;
+                                  {error, not_found} -> true
+                              end,
+                    Exists = case tomerl:get(CTests, [UUID]) of
+                                 {ok, _} -> true;
+                                 _ ->
+                                     io:format(
+                                       "[~s]~ndescription = \"~s\"~n"
+                                       "include = false~n~n",
+                                       [UUID, Description]
+                                     ),
+                                     false
+                             end,
+                    Exists andalso Included
                 end,
                 Cases1
             ),
