@@ -76,9 +76,9 @@ generate_test(N, #{
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
 
-    Cplx1 = lists:map(fun to_num/1, Z1),
-    Cplx2 = lists:map(fun to_num/1, Z2),
-    Expected = lists:map(fun to_num/1, Exp),
+    Cplx1 = to_cplx(Z1),
+    Cplx2 = to_cplx(Z2),
+    Expected = to_cplx(Exp),
 
     Fn = tgs:simple_fun(TestName ++ "_", [
         erl_syntax:tuple([
@@ -101,3 +101,6 @@ to_num(N) when is_number(N) -> N;
 to_num(<<"ln(2)">>) -> math:log(2);
 to_num(<<"pi">>) -> math:pi();
 to_num(<<"e">>) -> math:exp(1).
+
+to_cplx(L) when is_list(L) -> lists:map(fun to_num/1, L);
+to_cplx(N) when is_integer(N) -> [to_num(N), 0].
