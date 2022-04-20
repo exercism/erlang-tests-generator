@@ -108,8 +108,8 @@ process_json(#tgen{name = GName, module = Module, sha = SHA, dest = Dest}, Conte
                         ignore ->
                             {N, Tests, OldProperties}
                     catch
-                        error:Err ->
-                            io:format("~p: ~p", [Err, Spec])
+                        error:Err:Stack ->
+                            io:format("~n~p: ~p ~p~n", [Err, Spec, Stack])
                     end
                 end,
                 {1, [], []},
