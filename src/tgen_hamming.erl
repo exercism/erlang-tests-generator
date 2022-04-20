@@ -11,19 +11,18 @@ revision() -> 1.
 
 generate_test(N, #{
     description := Desc,
-    expected := #{error := Message},
+    expected := #{error := _Message},
     property := Prop,
     input := #{strand1 := S1, strand2 := S2}
 }) ->
     TestName = tgen:to_test_name(N, Desc),
     Property = tgen:to_property_name(Prop),
-    Reason = binary_to_list(Message),
 
     Fn = tgs:simple_fun(TestName ++ "_", [
         erl_syntax:tuple([
             tgs:string(Desc),
             tgs:call_macro("_assertMatch", [
-                tgs:value({error, Reason}),
+                tgs:value({error, badarg}),
                 tgs:call_fun("hamming:" ++ Property, [
                     tgs:value(binary_to_list(S1)),
                     tgs:value(binary_to_list(S2))
