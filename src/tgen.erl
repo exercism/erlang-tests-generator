@@ -40,9 +40,11 @@
     {ok, erl_syntax:syntax_tree() | [erl_syntax:syntax_tree()], [{fun_name(), args()}]}
     | ignore.
 -callback revision() -> pos_integer().
+-callback fun_body(binary(), non_neg_integer()) -> erl_syntax:syntax_tree().
 
 -optional_callbacks([prepare_test_module/0]).
 -optional_callbacks([prepare_tests/1]).
+-optional_callbacks([fun_body/2]).
 
 -spec check(string()) -> {true, atom()} | false.
 check(Name) ->
@@ -188,16 +190,16 @@ slugify([C | Name], true, Acc) when C >= $A andalso C =< $Z ->
 slugify([_ | Name], AllowSnail, Acc) ->
     slugify(Name, AllowSnail, Acc).
 
-generate_stub_module(_Module, ModuleName, Props) ->
+generate_stub_module(Module, ModuleName, Props) ->
     SluggedModName = slugify(ModuleName),
 
     Funs = lists:map(
         fun
             ({Name, []}) ->
-                tgs:simple_fun(Name, [tgs:atom(undefined)]);
+                tgs:simple_fun(Name, [get_fun_body(Module, Name, 0)]);
             ({Name, Args}) when is_list(Args) ->
                 UnderscoredArgs = lists:map(fun(Arg) -> [$_ | Arg] end, Args),
-                tgs:simple_fun(Name, UnderscoredArgs, [tgs:atom(undefined)])
+                tgs:simple_fun(Name, UnderscoredArgs, [get_fun_body(Module, Name, length(Args))])
         end,
         Props
     ),
@@ -221,6 +223,13 @@ generate_stub_module(_Module, ModuleName, Props) ->
                 Abstract
             )
         )}.
+
+get_fun_body(Module, Name, Arity) ->
+    {module, Module} = code:ensure_loaded(Module),
+    case erlang:function_exported(Module, fun_body, 2) of
+        true -> Module:fun_body(Name, Arity);
+        false -> tgs:atom("undefined")
+    end.
 
 prepare_test_module(Module) ->
     {module, Module} = code:ensure_loaded(Module),
