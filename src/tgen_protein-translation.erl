@@ -12,10 +12,37 @@ revision() -> 1.
 
 prepare_tests(Cases) ->
     lists:map(
-        fun(Case = #{expected := Exp}) -> Case#{expected => [protein_b2a(P) || P <- Exp]} end,
+        fun
+            (Case = #{expected := #{error := <<"Invalid codon">>}}) ->
+                Case#{expected => #{error => badarg}};
+            (Case = #{expected := Exp}) ->
+                Case#{expected => [protein_b2a(P) || P <- Exp]}
+        end,
         Cases
     ).
 
+generate_test(N, #{
+    description := Desc,
+    expected := #{error := Error},
+    property := Prop,
+    input := #{strand := Strand}
+}) ->
+    TestName = tgen:to_test_name(N, Desc),
+    Property = tgen:to_property_name(Prop),
+
+    Fn = tgs:simple_fun(TestName ++ "_", [
+        erl_syntax:tuple([
+            tgs:string(Desc),
+            tgs:call_macro("_assertMatch", [
+                erl_syntax:tuple([tgs:atom("error"), tgs:value(Error)]),
+                tgs:call_fun("protein_translation:" ++ Property, [
+                    tgs:value(binary_to_list(Strand))
+                ])
+            ])
+        ])
+    ]),
+
+    {ok, Fn, [{Property, ["Strand"]}]};
 generate_test(N, #{
     description := Desc,
     expected := Exp,
@@ -29,7 +56,7 @@ generate_test(N, #{
         erl_syntax:tuple([
             tgs:string(Desc),
             tgs:call_macro("_assertMatch", [
-                tgs:value(Exp),
+                erl_syntax:tuple([tgs:atom("ok"), tgs:value(Exp)]),
                 tgs:call_fun("protein_translation:" ++ Property, [
                     tgs:value(binary_to_list(Strand))
                 ])
