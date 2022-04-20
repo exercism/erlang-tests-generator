@@ -5,7 +5,8 @@
 -export([
     revision/0,
     prepare_test_module/0,
-    generate_test/2
+    generate_test/2,
+    fun_body/2
 ]).
 
 revision() -> 1.
@@ -51,3 +52,5 @@ generate_test(N, #{description := Desc, expected := Exp, property := Prop}) ->
     ]),
 
     {ok, Fn, [{Prop, []}]}.
+
+fun_body(<<"hello">>, 0) -> tgs:raw("\"Goodbye, Mars!\"").
