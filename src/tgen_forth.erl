@@ -56,11 +56,11 @@ generate_test(N, #{
 generate_test(N, #{
     description := Desc,
     expected := [ExpFirst, ExpSecond],
-    property := <<"evaluateBoth">> = Prop,
+    property := <<"evaluateBoth">>,
     input := #{instructionsFirst := InstructionsFirst, instructionsSecond := InstructionsSecond}
 }) ->
     TestName = tgen:to_test_name(N, Desc),
-    Property = tgen:to_property_name(Prop),
+    Property = tgen:to_property_name(<<"evaluate">>),
 
     First = tgs:call_macro("_assertEqual", [
         tgs:value(ExpFirst),
