@@ -102,11 +102,14 @@ process_json(#tgen{name = GName, module = Module, sha = SHA, dest = Dest}, Conte
             % io:format("Parsed JSON: ~p~n", [JSON]),
             {_, TestImpls0, Props} = lists:foldl(
                 fun(Spec, {N, Tests, OldProperties}) ->
-                    case Module:generate_test(N, Spec) of
+                    try Module:generate_test(N, Spec) of
                         {ok, Test, Properties} ->
                             {N + 1, [Test | Tests], combine(OldProperties, Properties)};
                         ignore ->
                             {N, Tests, OldProperties}
+                    catch
+                        error:Err:Stack ->
+                            io:format("~n~p: ~p ~p~n", [Err, Spec, Stack])
                     end
                 end,
                 {1, [], []},
